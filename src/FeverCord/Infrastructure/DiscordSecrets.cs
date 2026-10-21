@@ -2,6 +2,6 @@
 {
     public class DiscordSecrets
     {
-        public string DiscordWebhook { get; set; }
+        public string DiscordWebhook { get; set; } = string.Empty;
     }
 }

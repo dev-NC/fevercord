@@ -88,22 +88,32 @@ namespace FeverCordSvc
         {
             var feverSettings = configuration
                 .GetSection("Fever")
-                .Get<FeverSettings>();
+                .Get<FeverSettings>()
+                ?? throw new InvalidOperationException(
+                    "Missing required configuration section 'Fever'. See README for setup.");
             services.AddSingleton(feverSettings);
 
             var feverSecrets = configuration
                 .GetSection("FeverSecrets")
-                .Get<FeverSecrets>();
+                .Get<FeverSecrets>()
+                ?? throw new InvalidOperationException(
+                    "Missing required configuration section 'FeverSecrets'. See README for setup.");
+            ValidateFeverSecrets(feverSecrets);
             services.AddSingleton(feverSecrets);
 
             var discordSettings = configuration
                 .GetSection("Discord")
-                .Get<DiscordSettings>();
+                .Get<DiscordSettings>()
+                ?? throw new InvalidOperationException(
+                    "Missing required configuration section 'Discord'. See README for setup.");
             services.AddSingleton(discordSettings);
 
             var discordSecrets = configuration
                 .GetSection("DiscordSecrets")
-                .Get<DiscordSecrets>();
+                .Get<DiscordSecrets>()
+                ?? throw new InvalidOperationException(
+                    "Missing required configuration section 'DiscordSecrets'. See README for setup.");
+            ValidateDiscordSecrets(discordSecrets);
             services.AddSingleton(discordSecrets);
 
             services.AddFeverCordHttpClients(new FeverCordHttpClientConfiguration
@@ -120,6 +130,44 @@ namespace FeverCordSvc
             });
 
             return services;
+        }
+
+        private static void ValidateFeverSecrets(FeverSecrets secrets)
+        {
+            if (string.IsNullOrWhiteSpace(secrets.RssApiKey))
+            {
+                throw new InvalidOperationException(
+                    "'FeverSecrets:RssApiKey' is required. See README for setup.");
+            }
+
+            if (string.IsNullOrWhiteSpace(secrets.RssBaseAddress))
+            {
+                throw new InvalidOperationException(
+                    "'FeverSecrets:RssBaseAddress' is required. See README for setup.");
+            }
+
+            if (!Uri.TryCreate(secrets.RssBaseAddress, UriKind.Absolute, out _))
+            {
+                throw new InvalidOperationException(
+                    "'FeverSecrets:RssBaseAddress' must be an absolute URL " +
+                    "(e.g. https://freshrss.example.net/).");
+            }
+        }
+
+        private static void ValidateDiscordSecrets(DiscordSecrets secrets)
+        {
+            if (string.IsNullOrWhiteSpace(secrets.DiscordWebhook))
+            {
+                throw new InvalidOperationException(
+                    "'DiscordSecrets:DiscordWebhook' is required. See README for setup.");
+            }
+
+            if (!Uri.TryCreate(secrets.DiscordWebhook, UriKind.Absolute, out _))
+            {
+                throw new InvalidOperationException(
+                    "'DiscordSecrets:DiscordWebhook' must be an absolute URL " +
+                    "(e.g. https://discord.com/api/webhooks/...).");
+            }
         }
 
         public static IServiceCollection AddFeverCordHttpClients(
@@ -163,7 +211,7 @@ namespace FeverCordSvc
             // Some minor validation
             if (string.IsNullOrEmpty(cronSchedule))
             {
-                throw new Exception(
+                throw new InvalidOperationException(
                     $"No Quartz.NET Cron schedule found for job in configuration at {configKey}");
             }
 
@@ -183,7 +231,6 @@ namespace FeverCordSvc
         {
             services.AddQuartz(quartz =>
             {
-                quartz.UseMicrosoftDependencyInjectionJobFactory();
                 quartz.AddJobAndTrigger<UpdateWebhookJob>(configuration);
             });
 
