@@ -6,7 +6,7 @@ namespace FeverCordSvc.Features.Discord.Content
     public class EmbedContent
     {
         [JsonIgnore]
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         [JsonPropertyName("title")]
         [StringLength(256)]

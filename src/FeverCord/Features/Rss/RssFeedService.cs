@@ -29,8 +29,8 @@ namespace FeverCordSvc.Features.Rss
                 _authorizationContent);
 
             response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadFromJsonAsync<UnreadItemListContent>();
-            EnsureValidRssResponseContent(response, content);
+            var content = EnsureValidRssResponseContent(response,
+                await response.Content.ReadFromJsonAsync<UnreadItemListContent>());
 
             if (string.IsNullOrEmpty(content.UnreadItemIds))
             {
@@ -59,8 +59,8 @@ namespace FeverCordSvc.Features.Rss
                 _authorizationContent);
 
             response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadFromJsonAsync<ItemListContent>();
-            EnsureValidRssResponseContent(response, content);
+            var content = EnsureValidRssResponseContent(response,
+                await response.Content.ReadFromJsonAsync<ItemListContent>());
 
             return content.Items;
         }
@@ -79,9 +79,12 @@ namespace FeverCordSvc.Features.Rss
             response.EnsureSuccessStatusCode();
         }
 
-        private void EnsureValidRssResponseContent(HttpResponseMessage response, BaseRssContent? content)
+        private static T EnsureValidRssResponseContent<T>(
+            HttpResponseMessage response,
+            T? content)
+            where T : BaseRssContent
         {
-            if (content == null)
+            if (content is null)
             {
                 throw new HttpResponseException(
                     $"Http response content is null: {response.ReasonPhrase}");
@@ -93,6 +96,8 @@ namespace FeverCordSvc.Features.Rss
                 throw new HttpResponseException(
                     $"Authentication error: {response.ReasonPhrase}");
             }
+
+            return content;
         }
     }
 }

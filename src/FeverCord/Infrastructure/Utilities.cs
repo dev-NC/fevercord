@@ -25,7 +25,7 @@ namespace FeverCordSvc.Infrastructure
                 }
                 else
                 {
-                    length += value.ToString().Length;
+                    length += value.ToString()?.Length ?? 0;
                 }
             }
 

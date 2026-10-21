@@ -5,22 +5,22 @@ namespace FeverCordSvc.Features.Rss.Content
     public class ItemContent : BaseRssContent
     {
         [JsonPropertyName("id")]
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         [JsonPropertyName("feed_id")]
         public int FeedId { get; set; }
 
         [JsonPropertyName("title")]
-        public string Title { get; set; }
+        public string Title { get; set; } = string.Empty;
 
         [JsonPropertyName("author")]
-        public string Author { get; set; }
+        public string Author { get; set; } = string.Empty;
 
         [JsonPropertyName("html")]
-        public string Html { get; set; }
+        public string Html { get; set; } = string.Empty;
 
         [JsonPropertyName("url")]
-        public string Url { get; set; }
+        public string Url { get; set; } = string.Empty;
 
         [JsonPropertyName("is_saved")]
         public int IsSaved { get; set; }

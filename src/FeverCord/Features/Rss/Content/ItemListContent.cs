@@ -8,6 +8,6 @@ namespace FeverCordSvc.Features.Rss.Content
         public int TotalItems { get; set; }
 
         [JsonPropertyName("items")]
-        public IEnumerable<ItemContent> Items { get; set; }
+        public IEnumerable<ItemContent> Items { get; set; } = [];
     }
 }

@@ -49,7 +49,7 @@ namespace FeverCordSvc.Infrastructure
             doc.LoadHtml(html);
             doc.OptionEmptyCollection = true;
 
-            var node = doc.DocumentNode.SelectNodes("//img/@src").FirstOrDefault();
+            var node = doc.DocumentNode.SelectNodes("//img/@src")?.FirstOrDefault();
             if (node == null)
             {
                 return string.Empty;

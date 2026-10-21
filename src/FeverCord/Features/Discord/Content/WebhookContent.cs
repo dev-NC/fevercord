@@ -8,6 +8,6 @@ namespace FeverCordSvc.Features.Discord.Content
         public int? Flags { get; set; }
 
         [JsonPropertyName("embeds")]
-        public Queue<EmbedContent> Embeds { get; set; }
+        public Queue<EmbedContent> Embeds { get; set; } = [];
     }
 }
